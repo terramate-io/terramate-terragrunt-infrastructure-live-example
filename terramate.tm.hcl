@@ -1,4 +1,5 @@
 terramate {
+  required_version = ">= 0.9.0"
   config {
     # Configure the namespace of your Terramate Cloud organization
     cloud {
