@@ -25,8 +25,8 @@ inputs = {
   name          = "webserver-example-${local.env}"
   instance_type = "t2.micro"
 
-  min_size = 2
-  max_size = 2
+  min_size = 0
+  max_size = 1
 
   server_port = 8080
   alb_port    = 80

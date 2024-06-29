@@ -33,6 +33,6 @@ terraform {
 inputs = {
   instance_type = "t2.medium"
 
-  min_size = 1
-  max_size = 5
+  min_size = 0
+  max_size = 2
 }
