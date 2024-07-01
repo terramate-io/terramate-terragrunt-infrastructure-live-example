@@ -20,18 +20,6 @@ jobs:
       checks: read
 
     steps:
-      ### Create Pull Request comment
-
-      - name: Prepare pull request preview comment
-        if: github.event.pull_request
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: preview
-          message: |
-            ## Preview of Terragrunt changes in ${{ github.event.pull_request.head.sha }}
-
-            :warning: preview is being created... please stand by!
-
       ### Check out the code
 
       - name: Checkout
@@ -105,65 +93,3 @@ jobs:
             -lock=false
         env:
           TF_VAR_master_password: ${{ secrets.MYSQL_PROD_MASTER_PASSWORD }}
-
-      ### Update Pull Request comment
-
-      - name: Generate preview details
-        if: steps.list.outputs.stdout
-        id: comment
-        run: |
-          echo >>pr-comment.txt "## Preview of Terragrunt changes in ${{ github.event.pull_request.head.sha }}"
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt "[:mag: View Details on Terramate Cloud]($(cat prod/preview_url.txt))"
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt "### Changed Stacks"
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt '```bash'
-          echo >>pr-comment.txt "${{ steps.list.outputs.stdout }}"
-          echo >>pr-comment.txt '```'
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt "#### Terragrunt Plan"
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt '```terraform'
-          terramate run \
-            --changed \
-            --terragrunt \
-            -- \
-            terragrunt show -no-color out.tfplan \
-            |& dd bs=1024 count=248 >>pr-comment.txt
-          [ "${PIPESTATUS[0]}" == "141" ] && sed -i 's/#### Terragrunt Plan/#### :warning: Terragrunt Plan truncated: please check console output :warning:/' pr-comment.txt
-          echo >>pr-comment.txt '```'
-          cat pr-comment.txt >>$GITHUB_STEP_SUMMARY
-        env:
-          TF_VAR_master_password: ${{ secrets.MYSQL_PROD_MASTER_PASSWORD }}
-
-      - name: Generate preview when no stacks changed
-        if: success() && !steps.list.outputs.stdout
-        run: |
-          echo >>pr-comment.txt "## Preview of Terragrunt changes in ${{ github.event.pull_request.head.sha }}"
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt "### Changed Stacks"
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt 'No changed stacks, no detailed preview will be generated.'
-          cat pr-comment.txt >>$GITHUB_STEP_SUMMARY
-
-      - name: Generate preview when things failed
-        if: failure()
-        run: |
-          echo >>pr-comment.txt "## Preview of Terragrunt changes in ${{ github.event.pull_request.head.sha }}"
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt "[:mag: View Details on Terramate Cloud]($(cat prod/preview_url.txt))"
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt "### Changed Stacks"
-          echo >>pr-comment.txt
-          echo >>pr-comment.txt '```bash'
-          echo >>pr-comment.txt "${{ steps.list.outputs.stdout }}"
-          echo >>pr-comment.txt '```'
-          echo >>pr-comment.txt ':boom: Generating preview failed. Please see details in Actions output.'
-          cat pr-comment.txt >>$GITHUB_STEP_SUMMARY
-
-      - name: Publish generated preview as GitHub commnent
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: preview
-          path: pr-comment.txt
