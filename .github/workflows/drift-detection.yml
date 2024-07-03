@@ -2,8 +2,8 @@ name: Terragrunt Drift Detection and Reconciliation
 
 on:
   schedule:
-    # Run the drift detection every 6 hours
-    - cron: '0 */6 * * *'
+    # Run the drift detection every 12 hours
+    - cron: '0 */12 * * *'
 
 jobs:
   drift-detection:
