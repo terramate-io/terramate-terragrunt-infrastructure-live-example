@@ -1,6 +1,7 @@
 name: Terragrunt Drift Detection and Reconciliation
 
 on:
+  workflow_dispatch:
   schedule:
     # Run the drift detection every 12 hours
     - cron: '0 */12 * * *'
