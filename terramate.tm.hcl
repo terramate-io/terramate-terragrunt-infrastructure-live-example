@@ -1,6 +1,16 @@
 terramate {
   required_version = ">= 0.9.0"
   config {
+
+    # Optionally disable safe guards
+    # Learn more: https://terramate.io/docs/cli/orchestration/safeguards
+    # disable_safeguards = [
+    #   "git-untracked",
+    #   "git-uncommitted",
+    #   "git-out-of-sync",
+    #   "outdated-code",
+    # ]
+
     # Configure the namespace of your Terramate Cloud organization
     cloud {
       organization = "terramate-demo"
@@ -11,15 +21,5 @@ terramate {
         TG_BUCKET_PREFIX = "tmcd-"
       }
     }
-
-    # git {
-    #   # Git configuration
-    #   default_remote = "origin"
-
-    #   # Safeguards
-    #   check_untracked   = false
-    #   check_uncommitted = false
-    #   check_remote      = false
-    # }
   }
 }
