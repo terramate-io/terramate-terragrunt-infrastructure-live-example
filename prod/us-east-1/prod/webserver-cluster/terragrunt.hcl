@@ -34,5 +34,5 @@ inputs = {
   instance_type = "t2.medium"
 
   min_size = 0
-  max_size = 2
+  max_size = 4
 }

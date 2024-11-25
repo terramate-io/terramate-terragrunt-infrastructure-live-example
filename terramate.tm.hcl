@@ -13,7 +13,7 @@ terramate {
 
     # Configure the namespace of your Terramate Cloud organization
     cloud {
-      organization = "terramate-demo"
+      organization = "terramate"
     }
 
     run {
