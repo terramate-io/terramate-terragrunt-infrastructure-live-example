@@ -52,7 +52,7 @@ jobs:
 
       - name: List changed stacks
         id: list
-        run: terramate list --changed
+        run: terramate -C prod/us-east-1/prod/mysql list --changed
 
       ### Configure cloud credentials
 
@@ -74,12 +74,12 @@ jobs:
 
       - name: Initialize Terragrunt in changed stacks
         if: steps.list.outputs.stdout
-        run: terramate run --parallel 1 --changed -- terragrunt init -lock-timeout=5m
+        run: terramate -C prod/us-east-1/prod/mysql run --parallel 1 --changed -- terragrunt init -lock-timeout=5m
 
       - name: Plan Terragrunt changes in changed stacks
         if: steps.list.outputs.stdout
         run: |
-          terramate run \
+          terramate -C prod/us-east-1/prod/mysql run \
             --parallel 5 \
             --changed \
             --sync-preview \
