@@ -18,7 +18,9 @@ terramate {
 
     run {
       env {
-        TG_BUCKET_PREFIX = "tmcd-"
+        TG_BUCKET_PREFIX             = "tmcd-"
+        TERRAGRUNT_FORWARD_TF_STDOUT = "true"
+        TERRAGRUNT_LOG_FORMAT        = "bare"
       }
     }
   }

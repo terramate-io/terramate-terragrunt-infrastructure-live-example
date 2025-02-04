@@ -35,6 +35,8 @@ jobs:
 
       - name: Install asdf
         uses: asdf-vm/actions/setup@v3
+        with:
+          asdf_branch: v0.15.0
 
       - name: Install Terraform and Terragrunt with asdf
         run: |
@@ -107,4 +109,3 @@ jobs:
             terragrunt plan -out drift.tfplan -detailed-exitcode
         env:
           TF_VAR_master_password: ${{ secrets.MYSQL_PROD_MASTER_PASSWORD }}
-          
