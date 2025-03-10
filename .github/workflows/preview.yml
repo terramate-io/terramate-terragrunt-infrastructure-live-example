@@ -84,7 +84,6 @@ jobs:
             --changed \
             --sync-preview \
             --terraform-plan-file=out.tfplan \
-            --debug-preview-url preview_url.txt \
             --continue-on-error \
             --terragrunt \
             -- \
