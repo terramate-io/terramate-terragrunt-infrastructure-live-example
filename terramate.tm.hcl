@@ -1,5 +1,5 @@
 terramate {
-  required_version = ">= 0.9.0"
+  required_version = ">= 0.12.0"
   config {
 
     # Optionally disable safe guards
@@ -13,7 +13,7 @@ terramate {
 
     # Configure the namespace of your Terramate Cloud organization
     cloud {
-      organization = "terramate-demo"
+      organization = "terramate"
     }
 
     run {
