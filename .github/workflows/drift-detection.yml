@@ -70,6 +70,7 @@ jobs:
         run: |
           terramate run \
             --parallel 5 \
+            --continue-on-error \
             --cloud-sync-drift-status \
             --terraform-plan-file=drift.tfplan \
             --terragrunt \
