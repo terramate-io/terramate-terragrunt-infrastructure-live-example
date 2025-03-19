@@ -13,12 +13,12 @@ terramate {
 
     # Configure the namespace of your Terramate Cloud organization
     cloud {
-      organization = "terramate"
+      organization = "gmspinheiro"
     }
 
     run {
       env {
-        TG_BUCKET_PREFIX = "tmcd-"
+        TG_BUCKET_PREFIX = "tmcd-gmsp-"
       }
     }
   }
