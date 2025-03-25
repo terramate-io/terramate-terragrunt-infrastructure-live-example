@@ -87,9 +87,17 @@ jobs:
       #     issue-title: "Recommendation: Drift Reconciliation"
       #     minimum-approvals: 1
 
-      # Run terragrunt apply on all stacks tagged with 'reconcile'
+      # Run terragrunt apply on all stacks tagged with 'reconcile' if drifted stacks exist.
+
+      - name: Check for auto reconcile
+        id: find-drifted
+        run: |
+          terramate list \
+            --cloud-status=drifted \
+            --tags reconcile
 
       - name: Run Drift Reconciliation
+        if: steps.find-drifted.outputs.stdout != ''
         run: |
           terramate run \
             --cloud-status=drifted \
