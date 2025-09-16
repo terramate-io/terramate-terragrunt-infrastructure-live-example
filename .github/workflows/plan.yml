@@ -1,0 +1,73 @@
+name: Terramate Terragrunt Plan (PR)
+
+on:
+  pull_request:
+    branches: [ "**" ]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terragrunt-infrastructure-live-example
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (access keys)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up tools (terramate, terragrunt, opentofu)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y jq unzip curl git
+          # Install Terramate
+          TM_VERSION=${TERRAMATE_VERSION:-v0.9.5}
+          curl -sSL https://github.com/terramate-io/terramate/releases/download/${TM_VERSION}/terramate_${TM_VERSION#v}_linux_amd64.tar.gz -o tm.tgz
+          sudo tar -C /usr/local/bin -xzf tm.tgz terramate
+          terramate --version
+          # Install Terragrunt
+          TG_VERSION=${TERRAGRUNT_VERSION:-v0.58.4}
+          curl -sSL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/${TG_VERSION}/terragrunt_linux_amd64
+          sudo install terragrunt /usr/local/bin/terragrunt
+          terragrunt --version
+          # Install OpenTofu
+          TOFU_VERSION=${OPENTOFU_VERSION:-1.7.3}
+          curl -sSL https://github.com/opentofu/opentofu/releases/download/v${TOFU_VERSION}/tofu_${TOFU_VERSION}_linux_amd64.zip -o tofu.zip
+          sudo unzip -o tofu.zip -d /usr/local/bin
+          tofu version
+
+      - name: Validate Terramate configuration
+        run: |
+          terramate --version
+          terramate list
+
+      - name: Terragrunt plan (all stacks)
+        run: |
+          export TF_VAR_master_password="${{ secrets.TF_VAR_MASTER_PASSWORD }}"
+          terramate list --changed || true
+          terramate run --changed -- terragrunt run-all plan -lock-timeout=20m -no-color
+
+      - name: Upload plan logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terragrunt-plan-logs
+          path: |
+            terragrunt-infrastructure-live-example/**/.terragrunt-cache/**/*.log
+            terragrunt-infrastructure-live-example/**/planfile*
+          if-no-files-found: ignore
+
+
