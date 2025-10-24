@@ -32,11 +32,11 @@ jobs:
 
       - name: Install Terramate
         uses: terramate-io/terramate-action@v3
-        with:
-          version: "0.14.0"
 
       - name: Install asdf
         uses: asdf-vm/actions/setup@v3
+        with:
+          asdf_branch: v0.15.0
 
       - name: Install Terraform and Terragrunt with asdf
         run: |
